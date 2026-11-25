@@ -7,7 +7,6 @@ import java.util.concurrent.Callable;//concurrent package is used for multithrea
 
 public class main1 {
     public static void main(String[] args) throws Exception {
-        Runnable task1 = () -> System.out.println("Runnable task..");
 
          //here callable we will return value, so type integrer we wrote.
         Callable<Integer> task2 = () -> {
@@ -18,11 +17,16 @@ public class main1 {
         };
          ExecutorService executor = Executors.newSingleThreadExecutor();//this will create a single thread executor, so it will execute the task one by one.
 
-        executor.submit(task1);//this will submit the task to the executor service, so it will and print the result of the runable task.
-
         Future<Integer> result = executor.submit(task2);//this will submit the task to the executor service, so it will and print the result of the callable task.
+        boolean cancelled=result.cancel(true);//this will cancel the task if it is not done yet, it will return true if the task is cancelled and false if the task is already done.
+        System.out.println(cancelled);
+        System.out.println("cancel status: " + result.isCancelled());//this will check whether the task is cancelled or not, it will return true if the task is cancelled and false if the task is not cancelled.
+
+
         System.out.println(result.isDone());//this will check whether the task is done or not, it will return true if the task is done and false if the task is not done.
-        System.out.println(result.get());//this will get the result of the callable task.
+        if (!cancelled) {
+            System.out.println(result.get());//this will get the result of the callable task.
+        }
         executor.shutdown();
 
     }
