@@ -74,5 +74,36 @@ System.out.println("processing payment");
             });
             System.out.println(payment1.join());
 
-    }
+//allOf: will wait for all the completable future to complete and return a new completable future
+    CompletableFuture<String> order = CompletableFuture.supplyAsync(()->{
+        System.out.println("order is placed");
+        return "ORDER202";
+    });
+    CompletableFuture<Double> price = CompletableFuture.supplyAsync(()->{
+        System.out.println("price is calculated");
+        return 500.0;
+    });
+    CompletableFuture<Void> result = CompletableFuture.allOf(order,price);
+    result.join();
+    System.out.println("order id is "+order.join());
+    System.out.println("total price is "+price.join());
+
+//anyOf: will wait for any of the completable future to complete and return a new completable future
+    CompletableFuture<String> order1 = CompletableFuture.supplyAsync(()->{
+        System.out.println("order is placed");
+        return "ORDER202";
+    });
+    CompletableFuture<Double> price1 = CompletableFuture.supplyAsync(()->{
+        System.out.println("price is calculated");
+        return 500.0;
+    });
+    CompletableFuture<Object> result1 = CompletableFuture.anyOf(order1,price1);
+    result1.join();
+    System.out.println("result is "+result1.join());
+    //ortimeout: will wait for the completable future to complete for a specified time and return a new completable future
+    CompletableFuture<String> order2 = CompletableFuture.supplyAsync(()->{
+        System.out.println("order is placed");
+        return "ORDER202";
+    }).orTimeout(2,java.util.concurrent.TimeUnit.SECONDS);
+}
 }
