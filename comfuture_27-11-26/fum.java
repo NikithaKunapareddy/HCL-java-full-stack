@@ -40,5 +40,39 @@ public class fum {
 
     System.out.println(totalprice.join());
 
+//exceptionally: will handle the exception if any exception occurs in the completable future
+
+CompletableFuture<String> payment = CompletableFuture.supplyAsync(()->{
+System.out.println("processing payment");
+     
+     int amount = 1000;
+     if(amount>500){
+        throw new RuntimeException("payement is declined");
+     }  
+     return "payment is successful";
+    }).exceptionally(error-> {
+        System.out.println("payment is failed");
+        return "try again";
+    });
+    System.out.println(payment.join());
+
+//handle: will handle the exception if any exception occurs in the completable future and return a new completable future
+    CompletableFuture<String> payment1 = CompletableFuture.supplyAsync(()->{
+        System.out.println("processing payment");
+             
+             int amount = 1000;
+             if(amount>500){
+                throw new RuntimeException("payement is declined");
+             }  
+             return "payment is successful";
+            }).handle((result,error)-> {
+                if(error!=null){
+                    System.out.println("payment is failed");
+                    return "try again";
+                }
+                return result;
+            });
+            System.out.println(payment1.join());
+
     }
 }
